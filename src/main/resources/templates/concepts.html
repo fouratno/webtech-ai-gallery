@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" style="font-family:sans-serif">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Interior Gallery – Concepts</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body style="background:#f8f8f8; padding:32px">
+<h1>AI Interior Gallery – Concepts</h1>
+<p>This page is rendered server-side with <strong>Thymeleaf</strong>.</p>
+<hr>
+<div th:each="c : ${concepts}"
+     style="background:white; margin:8px 0; padding:12px; border-radius:8px;">
+    <h2 th:text="${c.title}"></h2>
+    <p>Prompt Artist: <span th:text="${c.promptArtist}"></span></p>
+    <p>AI Tool: <span th:text="${c.aiTool}"></span></p>
+</div>
+</body>
+</html>
