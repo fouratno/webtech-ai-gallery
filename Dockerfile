@@ -1,27 +1,28 @@
-# ---- Build-Stage: JDK 25 für Gradle-Toolchain (Java 25) ----
-FROM eclipse-temurin:25-jdk AS builder
+# ---- Build Stage: use JDK 21 to run Gradle ----
+FROM eclipse-temurin:21-jdk AS builder
 
 WORKDIR /workspace
 
-# Projekt in das Image kopieren
-COPY . .
+# Copy Gradle wrapper first (better build cache)
+COPY gradlew gradle.* ./
+COPY gradle ./gradle
 
-# Gradle Wrapper ausführbar machen
 RUN chmod +x ./gradlew
 
-# Spring Boot Jar bauen
+# Copy the rest of the project
+COPY . .
+
+# Build the Spring Boot jar
 RUN ./gradlew clean bootJar --no-daemon
 
-# ---- Runtime-Stage: schlankes JRE 25 Image ----
-FROM eclipse-temurin:25-jre
+# ---- Runtime Stage: slim JRE 21 image ----
+FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
-# Fertiges Jar aus der Build-Stage kopieren
-COPY --from=builder /workspace/build/libs/*.jar app.jar
+# Copy the built jar from the builder image
+COPY --from=builder /workspace/build/libs/*SNAPSHOT.jar app.jar
 
-# Render nutzt PORT, Spring Boot hört intern auf 8080
-ENV PORT=8080
 EXPOSE 8080
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

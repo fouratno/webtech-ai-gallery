@@ -9,10 +9,11 @@ version = '0.0.1-SNAPSHOT'
 description = 'AI Interior Gallery – WebTech Project'
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(25)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
+
 
 configurations {
 	compileOnly {
