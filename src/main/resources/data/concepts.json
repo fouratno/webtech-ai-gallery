@@ -1,0 +1,20 @@
+[
+  {
+    "title": "Tropical Kitchen",
+    "promptArtist": "Furat Nouairia",
+    "aiTool": "Midjourney v6",
+    "imageUrl": "https://images.unsplash.com/photo-1760067537540-cc36c1700d7e?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1331?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    "title": "Minimalist Living Room",
+    "promptArtist": "AI Studio",
+    "aiTool": "SDXL",
+    "imageUrl": "https://images.unsplash.com/photo-1724582586529-62622e50c0b3?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=1228?auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    "title": "Rustic Bedroom",
+    "promptArtist": "Luna Design",
+    "aiTool": "DALL·E 3",
+    "imageUrl": "https://images.unsplash.com/photo-1664361238220-9d6bfb7ff41a?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=687?auto=format&fit=crop&w=800&q=80"
+  }
+]
