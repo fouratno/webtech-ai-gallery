@@ -49,8 +49,8 @@ cd webtech-ai-gallery
 
 Anwendung starten
 
-./gradlew bootRun
-
+./gradlew clean bootJar
+java -jar build/libs/app.jar
 
 Browser öffnen:
 

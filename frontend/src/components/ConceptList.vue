@@ -25,7 +25,14 @@ const concepts = ref<Concept[]>([])
 
 onMounted(async () => {
   try {
-    const res = await fetch('http://localhost:8080/concepts')
+    const API_BASE_URL =
+      import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+
+    onMounted(async () => {
+      const res = await fetch(`${API_BASE_URL}/concepts`);
+      concepts.value = await res.json();
+    });
+
     concepts.value = await res.json()
   } catch (err) {
     console.error('Failed to fetch concepts:', err)
