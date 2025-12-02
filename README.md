@@ -68,6 +68,7 @@ http://localhost:8080/view
 - **Dockerfile** nutzt JDK 21 für Build & Runtime.
 - Start-Kommando: wird automatisch aus `ENTRYPOINT` übernommen (`java -jar app.jar`).
 - Der Spring Boot Server liest den Port aus der Umgebungsvariablen `PORT` (Render Vorgabe) und erlaubt CORS für das Frontend (localhost und Render-URL).
+- **CORS-Origins anpassen:** In `src/main/java/com/aiinteriorgallery/aiinteriorgallery/config/CorsConfig.java` die Platzhalter-URL durch deine tatsächliche Render-Frontend-Domain ersetzen.
 
 ### Frontend (Static Site)
 - **Root Directory:** `frontend`

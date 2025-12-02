@@ -16,6 +16,7 @@ public class CorsConfig {
                 registry.addMapping("/**")
                         .allowedOrigins(
                                 "http://localhost:5173",
+                                // Replace with your deployed frontend domain when available
                                 "https://webtech-ai-gallery-frontend.onrender.com"
                         )
                         .allowedMethods("GET");
