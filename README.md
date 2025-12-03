@@ -17,7 +17,7 @@ eine Server-Side-Rendering-Seite mit **Thymeleaf** anzeigt.
 ---
 
 ## ⚙️ Tech-Stack
-- **JDK 25**
+- **JDK 21** (toolchain and container images)
 - **Spring Boot 3.5.6**
 - **Gradle 9.0-Milestone-3**
 - **Thymeleaf Template Engine**
@@ -59,6 +59,22 @@ http://localhost:8080/concepts
 
 http://localhost:8080/view
  → SSR-Galerie
+
+---
+
+## ☁️ Deployment auf Render
+
+### Backend (Docker Service)
+- **Dockerfile** nutzt JDK 21 für Build & Runtime.
+- Start-Kommando: wird automatisch aus `ENTRYPOINT` übernommen (`java -jar app.jar`).
+- Der Spring Boot Server liest den Port aus der Umgebungsvariablen `PORT` (Render Vorgabe) und erlaubt CORS für das Frontend (localhost und Render-URL).
+- **CORS-Origins anpassen:** In `src/main/java/com/aiinteriorgallery/aiinteriorgallery/config/CorsConfig.java` die Platzhalter-URL durch deine tatsächliche Render-Frontend-Domain ersetzen.
+
+### Frontend (Static Site)
+- **Root Directory:** `frontend`
+- **Build Command:** `npm install && npm run build`
+- **Publish Directory:** `dist`
+- **Environment Variable:** `VITE_API_BASE_URL` (z. B. `https://<dein-backend>.onrender.com`); für Production liegt eine Vorlage unter `frontend/.env.production`.
 
 📂 Projektstruktur
 src/

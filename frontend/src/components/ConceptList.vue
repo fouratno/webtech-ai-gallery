@@ -1,11 +1,15 @@
 <template>
   <div class="gallery">
-    <div v-for="concept in concepts" :key="concept.title" class="card">
-      <img :src="concept.imageUrl" :alt="concept.title" class="image" />
-      <div class="content">
-        <h2>{{ concept.title }}</h2>
-        <p><strong>Prompt Artist:</strong> {{ concept.promptArtist }}</p>
-        <p><strong>AI Tool:</strong> {{ concept.aiTool }}</p>
+    <p v-if="loading" class="status">Loading concepts...</p>
+    <p v-else-if="error" class="status error">Failed to load concepts: {{ error }}</p>
+    <div v-else class="card-list">
+      <div v-for="concept in concepts" :key="concept.title" class="card">
+        <img :src="concept.imageUrl" :alt="concept.title" class="image" />
+        <div class="content">
+          <h2>{{ concept.title }}</h2>
+          <p><strong>Prompt Artist:</strong> {{ concept.promptArtist }}</p>
+          <p><strong>AI Tool:</strong> {{ concept.aiTool }}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -22,40 +26,54 @@ interface Concept {
 }
 
 const concepts = ref<Concept[]>([])
+const loading = ref(true)
+const error = ref<string | null>(null)
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
 
 onMounted(async () => {
   try {
-    const API_BASE_URL =
-      import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
-
-    onMounted(async () => {
-      const res = await fetch(`${API_BASE_URL}/concepts`);
-      concepts.value = await res.json();
-    });
-
+    const res = await fetch(`${API_BASE}/concepts`)
+    if (!res.ok) {
+      throw new Error('Failed to fetch data')
+    }
     concepts.value = await res.json()
   } catch (err) {
-    console.error('Failed to fetch concepts:', err)
+    error.value = err instanceof Error ? err.message : 'Failed to fetch data'
+  } finally {
+    loading.value = false
   }
 })
 </script>
 
 <style scoped>
 .gallery {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 2rem;
   padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
 }
 
-/* Card layout */
+.status {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.status.error {
+  color: #c0392b;
+}
+
+.card-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+}
+
 .card {
   background: #fff;
   border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   width: 340px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -63,7 +81,7 @@ onMounted(async () => {
 
 .card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 .image {
