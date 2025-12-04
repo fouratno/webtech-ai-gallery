@@ -1,41 +1,34 @@
 package com.aiinteriorgallery.aiinteriorgallery.controller;
 
 import com.aiinteriorgallery.aiinteriorgallery.model.Concept;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.core.io.ClassPathResource;
+import com.aiinteriorgallery.aiinteriorgallery.repository.ConceptRepository;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "*") // allow frontend on Render to call the API
+@RequestMapping("/concepts")
 public class ConceptController {
 
-    @GetMapping("/concepts")
+    private final ConceptRepository conceptRepository;
+
+    public ConceptController(ConceptRepository conceptRepository) {
+        this.conceptRepository = conceptRepository;
+    }
+
+    @GetMapping
     public ResponseEntity<List<Concept>> getConcepts() {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
+        return ResponseEntity.ok(conceptRepository.findAll());
+    }
 
-            // Load JSON file from src/main/resources/data/concepts.json
-            InputStream inputStream =
-                    new ClassPathResource("data/concepts.json").getInputStream();
-
-            List<Concept> concepts = mapper.readValue(
-                    inputStream,
-                    new TypeReference<List<Concept>>() {}
-            );
-
-            return ResponseEntity.ok(concepts);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
-        }
+    @PostMapping
+    public ResponseEntity<Concept> createConcept(@RequestBody Concept concept) {
+        Concept savedConcept = conceptRepository.save(concept);
+        return ResponseEntity.ok(savedConcept);
     }
 }
