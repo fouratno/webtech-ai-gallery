@@ -1,10 +1,6 @@
 package com.aiinteriorgallery.aiinteriorgallery.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "concepts")
@@ -19,8 +15,8 @@ public class Concept {
     private String aiTool;
     private String imageUrl;
 
+    // Default constructor for JPA & Jackson
     public Concept() {
-        // Default constructor required by JPA
     }
 
     public Concept(String title, String promptArtist, String aiTool, String imageUrl) {
@@ -30,11 +26,13 @@ public class Concept {
         this.imageUrl = imageUrl;
     }
 
+    // Getters & Setters
+
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Long id) { // not strictly needed, but okay
         this.id = id;
     }
 
