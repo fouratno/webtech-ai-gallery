@@ -1,52 +1,53 @@
 <template>
   <div class="gallery">
-    <form class="concept-form" @submit.prevent="submitConcept">
+    <h1>AI Interior Gallery</h1>
+
+    <!-- New Concept Form -->
+    <form class="concept-form" @submit.prevent="handleSubmit">
       <h2>Add a new concept</h2>
-      <div class="field">
-        <label for="title">Title</label>
-        <input id="title" v-model="form.title" type="text" required placeholder="Cozy reading nook" />
-      </div>
-      <div class="field">
-        <label for="promptArtist">Prompt Artist</label>
-        <input
-          id="promptArtist"
-          v-model="form.promptArtist"
-          type="text"
-          required
-          placeholder="Studio Ghibli"
-        />
-      </div>
-      <div class="field">
-        <label for="aiTool">AI Tool</label>
-        <input id="aiTool" v-model="form.aiTool" type="text" required placeholder="Midjourney" />
-      </div>
-      <div class="field">
-        <label for="imageUrl">Image URL</label>
-        <input id="imageUrl" v-model="form.imageUrl" type="url" required placeholder="https://..." />
-      </div>
-      <p v-if="submitError" class="status error">{{ submitError }}</p>
-      <button type="submit" :disabled="submitting">
-        {{ submitting ? 'Submitting...' : 'Add Concept' }}
+
+      <label>
+        Title
+        <input v-model="newConcept.title" required />
+      </label>
+
+      <label>
+        Prompt Artist
+        <input v-model="newConcept.promptArtist" required />
+      </label>
+
+      <label>
+        AI Tool
+        <input v-model="newConcept.aiTool" required />
+      </label>
+
+      <label>
+        Image URL
+        <input v-model="newConcept.imageUrl" required />
+      </label>
+
+      <button type="submit" :disabled="isSubmitting">
+        {{ isSubmitting ? 'Saving...' : 'Save Concept' }}
       </button>
+
+      <p v-if="error" class="error">{{ error }}</p>
+      <p v-if="success" class="success">{{ success }}</p>
     </form>
 
-    <p v-if="loading" class="status">Loading concepts...</p>
-    <p v-else-if="error" class="status error">Failed to load concepts: {{ error }}</p>
-    <div v-else class="card-list">
+    <!-- Concept Cards -->
+    <div class="cards">
       <div v-for="concept in concepts" :key="concept.id ?? concept.title" class="card">
         <img :src="concept.imageUrl" :alt="concept.title" class="image" />
-        <div class="content">
-          <h2>{{ concept.title }}</h2>
-          <p><strong>Prompt Artist:</strong> {{ concept.promptArtist }}</p>
-          <p><strong>AI Tool:</strong> {{ concept.aiTool }}</p>
-        </div>
+        <h2>{{ concept.title }}</h2>
+        <p><strong>Prompt Artist:</strong> {{ concept.promptArtist }}</p>
+        <p><strong>AI Tool:</strong> {{ concept.aiTool }}</p>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 
 interface Concept {
   id?: number
@@ -57,64 +58,74 @@ interface Concept {
 }
 
 const concepts = ref<Concept[]>([])
-const loading = ref(true)
+const isLoading = ref(false)
+const isSubmitting = ref(false)
 const error = ref<string | null>(null)
-const submitting = ref(false)
-const submitError = ref<string | null>(null)
+const success = ref<string | null>(null)
 
-const form = reactive<Concept>({
+// new concept model
+const newConcept = reactive<Concept>({
   title: '',
   promptArtist: '',
   aiTool: '',
-  imageUrl: '',
+  imageUrl: ''
 })
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+// API base URL from env (set on Render + fallback for localhost)
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
 
+// Load existing concepts
 const loadConcepts = async () => {
   try {
+    isLoading.value = true
+    error.value = null
     const res = await fetch(`${API_BASE_URL}/concepts`)
     if (!res.ok) {
-      throw new Error('Failed to fetch data')
+      throw new Error(`Failed to load concepts: ${res.status}`)
     }
     concepts.value = await res.json()
-  } catch (err) {
-    error.value = err instanceof Error ? err.message : 'Failed to fetch data'
+  } catch (e: any) {
+    error.value = e.message ?? 'Error while loading concepts'
   } finally {
-    loading.value = false
+    isLoading.value = false
   }
 }
 
-const resetForm = () => {
-  form.title = ''
-  form.promptArtist = ''
-  form.aiTool = ''
-  form.imageUrl = ''
-}
-
-const submitConcept = async () => {
-  submitError.value = null
-  submitting.value = true
+// Submit new concept
+const handleSubmit = async () => {
   try {
+    isSubmitting.value = true
+    error.value = null
+    success.value = null
+
     const res = await fetch(`${API_BASE_URL}/concepts`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify(form),
+      body: JSON.stringify(newConcept)
     })
 
     if (!res.ok) {
-      throw new Error('Failed to create concept')
+      throw new Error(`Failed to save concept: ${res.status}`)
     }
 
-    const savedConcept: Concept = await res.json()
-    concepts.value.push(savedConcept)
-    resetForm()
-  } catch (err) {
-    submitError.value = err instanceof Error ? err.message : 'Failed to create concept'
+    const saved = await res.json()
+    // add to list
+    concepts.value.unshift(saved)
+
+    // clear form
+    newConcept.title = ''
+    newConcept.promptArtist = ''
+    newConcept.aiTool = ''
+    newConcept.imageUrl = ''
+
+    success.value = 'Concept saved successfully!'
+  } catch (e: any) {
+    error.value = e.message ?? 'Error while saving concept'
   } finally {
-    submitting.value = false
+    isSubmitting.value = false
   }
 }
 
@@ -123,113 +134,100 @@ onMounted(loadConcepts)
 
 <style scoped>
 .gallery {
-  padding: 2rem;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 2rem auto;
+  font-family: "Inter", sans-serif;
 }
 
+/* Form styling */
 .concept-form {
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: #ffffff;
   padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
   margin-bottom: 2rem;
   display: grid;
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem 1.5rem;
 }
 
 .concept-form h2 {
-  margin: 0;
-  font-size: 1.4rem;
+  grid-column: 1 / -1;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
 }
 
-.field {
+.concept-form label {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  font-size: 0.9rem;
+  gap: 0.25rem;
 }
 
-label {
-  font-weight: 600;
+.concept-form input {
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
 }
 
-input {
-  padding: 0.75rem 0.9rem;
-  border: 1px solid #dcdcdc;
-  border-radius: 10px;
-  font-size: 1rem;
-}
-
-button {
-  background: #111;
-  color: #fff;
+.concept-form button {
+  grid-column: 1 / -1;
+  padding: 0.6rem 1.2rem;
+  border-radius: 999px;
   border: none;
-  border-radius: 10px;
-  padding: 0.8rem 1rem;
-  font-weight: 700;
+  background: #111827;
+  color: #fff;
   cursor: pointer;
-  transition: opacity 0.2s ease;
 }
 
-button:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
+.concept-form button:disabled {
+  opacity: 0.6;
+  cursor: default;
 }
 
-.status {
-  text-align: center;
-  font-size: 1.1rem;
-  color: #333;
+.error {
+  grid-column: 1 / -1;
+  color: #b91c1c;
+  font-size: 0.9rem;
 }
 
-.status.error {
-  color: #c0392b;
+.success {
+  grid-column: 1 / -1;
+  color: #15803d;
+  font-size: 0.9rem;
 }
 
-.card-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 2rem;
+/* Cards grid */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
 }
 
 .card {
   background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  width: 340px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .image {
   width: 100%;
   height: 220px;
   object-fit: cover;
-}
-
-.content {
-  padding: 1rem 1.2rem;
-  text-align: left;
+  border-radius: 8px;
+  margin-bottom: 1rem;
 }
 
 h2 {
   font-size: 1.3rem;
-  margin: 0.5rem 0;
-  color: #111;
+  margin-bottom: 0.5rem;
 }
 
 p {
   margin: 0.3rem 0;
-  color: #333;
-}
-
-strong {
-  color: #000;
 }
 </style>
