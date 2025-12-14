@@ -14,12 +14,14 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins(
-                                "http://localhost:5173",
-                                // Replace with your deployed frontend domain when available
-                                "https://webtech-ai-gallery-frontend.onrender.com"
-                        )
-                        .allowedMethods("GET");
+                    .allowedOrigins(
+                        "http://localhost:5173",
+                        "https://webtech-ai-fornt.onrender.com"
+                    )
+                    .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD")
+                    .allowedHeaders("*")
+                    .allowCredentials(true)
+                    .maxAge(3600);
             }
         };
     }
