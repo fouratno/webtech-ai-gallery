@@ -61,6 +61,7 @@ Jedes Konzept enthält Informationen über den *Prompt Artist*, das verwendete *
   - `DB_USERNAME`
   - `DB_PASSWORD`
   - `PORT` (optional)
+  - `APP_CORS_ALLOWED_ORIGINS` (optional, Komma-separiert; Standard: `http://localhost:5173,https://*.onrender.com`)
 - **CORS-Origins anpassen:** In `src/main/java/com/aiinteriorgallery/aiinteriorgallery/config/CorsConfig.java` die Render-Frontend-Domain pflegen.
 
 ### Frontend (Static Site)
