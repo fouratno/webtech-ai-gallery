@@ -54,7 +54,7 @@ Jedes Konzept enthält Informationen über den *Prompt Artist*, das verwendete *
 ## ☁️ Deployment auf Render
 
 ### Backend (Docker Service)
-- **Dockerfile** nutzt JDK 21 für Build & Runtime und startet automatisch `java -jar app.jar`.
+- **Dockerfile** nutzt JDK 21 (Eclipse Temurin, Jammy-Images) für Build & Runtime und startet automatisch `java -jar app.jar`.
 - Server-Port: wird über `PORT` gesetzt (Render Vorgabe, Fallback 8080).
 - **Umgebungsvariablen:**
   - `DB_URL` (z. B. `jdbc:postgresql://<host>:5432/<db>`)
