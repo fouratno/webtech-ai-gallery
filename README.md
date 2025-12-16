@@ -1,27 +1,11 @@
-![CI](https://github.com/fouratno/webtech-ai-gallery/actions/workflows/ci.yml/badge.svg)
+🏠 AI Interior Gallery
 
-🖼️ AI Interior Gallery
+AI Interior Gallery ist eine Webanwendung zur Verwaltung und Präsentation von KI-generierten Interior-Design-Konzepten.
+Nutzer können bestehende Konzepte ansehen und über eine Weboberfläche neue Konzepte anlegen, die dauerhaft in einer Datenbank gespeichert werden.
 
-Eine Web-Applikation zur Verwaltung und Präsentation von KI-generierten Interior-Design-Konzepten.
-Nutzer können neue Design-Konzepte über eine Web-Oberfläche erstellen, die persistent in einer Datenbank gespeichert und anschließend in einer Galerie angezeigt werden.
+Das Projekt wurde im Rahmen der Lehrveranstaltung Webtechnologien umgesetzt und erfüllt die Anforderungen der Meilensteine M3 und M4.
 
-🔗 Live-Deployment (Render)
-
-Frontend (Vue.js):
-👉 https://webtech-ai-gallery-2.onrender.com/
-
-Backend (Spring Boot REST API):
-👉 https://webtech-ai-gallery-backen.onrender.com/
-
-GET-Endpoint (Beispiel):
-👉 https://webtech-ai-gallery-backen.onrender.com/concepts
-
-🎯 Projektidee
-
-Die Anwendung setzt die ursprüngliche Projektidee um, eine kuratierte Galerie von KI-gestützten Interior-Design-Prompts bereitzustellen.
-Jedes Konzept besteht aus Metadaten (Titel, Prompt-Artist, KI-Tool, Bild-URL) und kann über das Frontend erstellt und angezeigt werden.
-
-🧱 Architektur & Tech-Stack
+🔧 Tech-Stack
 Frontend
 
 Vue.js 3
@@ -30,134 +14,153 @@ TypeScript
 
 Vite
 
-Fetch API
+HTML / CSS
 
-Deployment: Render
+Vitest (Tests)
 
 Backend
 
 Spring Boot
 
+Java 21
+
 REST API
 
 JPA / Hibernate
 
-PostgreSQL (Produktion)
-
-H2 (lokale Entwicklung)
-
-Deployment: Render (Docker)
-
 Datenbank
 
-PostgreSQL (Render Managed Database)
+PostgreSQL
 
-Persistente Speicherung der Entitäten
+DevOps / Qualität
 
-🔁 Kommunikation Frontend ↔ Backend
-Methode	Endpoint	Beschreibung
-GET	/concepts	Alle Konzepte abrufen
-POST	/concepts	Neues Konzept erstellen
+GitHub Actions (CI/CD)
 
-Das Frontend kommuniziert ausschließlich über HTTP mit der Spring-Boot-REST-API (JSON).
+Automatisierte Frontend- und Backend-Tests
 
-🗄️ Datenmodell (Concept)
-{
-  "id": 1,
-  "title": "Minimal Loft",
-  "promptArtist": "Studio A",
-  "aiTool": "Midjourney",
-  "imageUrl": "https://example.com/image.jpg"
-}
+Deployment auf Render
 
-🚀 Nutzung der Anwendung
+Konfiguration über Environment Variables (keine Secrets im Repository)
 
-Öffne das Frontend
+🏗️ Architektur
 
-Fülle das Formular „Create Concept“ aus
+Die Anwendung ist klar in Frontend und Backend getrennt:
 
-Klicke auf Create Concept
+Das Vue-Frontend stellt die Benutzeroberfläche bereit.
 
-Das Konzept wird:
+Das Spring-Boot-Backend stellt eine REST-Schnittstelle zur Verfügung.
 
-per POST an das Backend gesendet
+Die Kommunikation erfolgt ausschließlich über HTTP (JSON).
 
-in PostgreSQL gespeichert
+Die Daten werden persistent in einer PostgreSQL-Datenbank gespeichert.
 
-automatisch in der Galerie angezeigt
+CORS ist gezielt für das Frontend konfiguriert.
 
-Nach einem Reload bleiben die Daten erhalten (persistente DB)
+REST-Endpunkte (Auszug):
 
-🧪 Tests & Continuous Delivery
-Frontend-Tests
+GET /concepts – Abrufen aller Konzepte
 
-Framework: Vitest
+POST /concepts – Anlegen eines neuen Konzepts
 
-Getestet werden u.a.:
+✨ Funktionsumfang / Use-Cases
 
-Rendering der App
+Anzeige aller gespeicherten Interior-Konzepte
 
-Laden von Konzepten (GET)
+Anlegen neuer Konzepte über ein Formular im Frontend
 
-Erstellen neuer Konzepte (POST)
+Validierung der Eingaben im Frontend
 
-Tests werden beim Build automatisch ausgeführt
+Persistente Speicherung der Daten in PostgreSQL
 
-Backend-Tests
+REST-basierte Kommunikation zwischen Frontend und Backend
 
-Lokale Tests vorhanden
+Fehler- und Ladezustände im Frontend
 
-In der Render-CI schlägt das automatische Nachladen von Maven-Dependencies gelegentlich fehl (403),
-dies ist dokumentiert und beeinflusst die Funktionalität der produktiven Anwendung nicht.
+Automatisierte Tests (Frontend & Backend)
+
+CI/CD-Pipeline mit GitHub Actions
+
+Deployment von Frontend und Backend auf Render
+
+🖥️ Deployment (öffentlich erreichbar)
+
+Frontend:
+https://webtech-ai-gallery-2.onrender.com/
+
+Backend:
+https://webtech-ai-gallery-backen.onrender.com/
+
+Beide Services sind öffentlich erreichbar und kommunizieren produktiv miteinander.
+
+🚀 Lokales Setup (Kurzfassung)
+Voraussetzungen
+
+Java 21+
+
+Node.js 18+
+
+PostgreSQL oder Docker
+
+Git
+
+Backend starten
+./gradlew bootRun
+
+
+Backend läuft unter:
+👉 http://localhost:8080
+
+Frontend starten
+cd frontend
+npm install
+npm run dev
+
+
+Frontend läuft unter:
+👉 http://localhost:5173
+
+🧪 Tests & Continuous Integration
+
+Frontend:
+
+Komponenten- und Logiktests mit Vitest
+
+Backend:
+
+Spring-Boot-Tests
+
+CI/CD:
+
+GitHub Actions führt Tests automatisch bei Push & Pull Requests aus
+
+Nur erfolgreiche Builds werden gemergt
+
+Die CI-Pipeline ist im Repository unter .github/workflows/ci.yml definiert.
 
 🔐 Sicherheit & Konfiguration
 
-Keine Credentials im GitHub-Repository
+Keine Zugangsdaten im Klartext im Repository
 
-Alle sensiblen Daten (DB-Zugang, Ports) werden über Environment Variables konfiguriert
+Datenbank-Zugangsdaten werden ausschließlich über Environment Variables gesetzt
 
-Separate Konfigurationen für:
+Separate Konfiguration für lokale Entwicklung und Produktion
 
-lokale Entwicklung (application.properties)
+📚 Projektkontext
 
-Produktion (application-prod.properties)
+Dieses Projekt wurde im Rahmen der Webtechnologien-Übung umgesetzt und demonstriert:
 
-📁 Projektstruktur (Auszug)
-webtech-ai-gallery/
-│
-├── frontend/                # Vue.js Frontend
-│   ├── src/
-│   └── tests/
-│
-├── src/main/java/            # Spring Boot Backend
-│   ├── controller/
-│   ├── model/
-│   ├── repository/
-│   └── config/
-│
-├── Dockerfile
-├── build.gradle
-└── README.md
+moderne Webarchitektur
 
-📌 Erfüllte Projektanforderungen
+REST-basierte Kommunikation
 
-✅ Web-App auf Render deployed (öffentlich erreichbar)
+persistente Datenhaltung
 
-✅ Frontend & Backend getrennt
+Deployment & CI/CD
 
-✅ REST-API mit Spring Boot
+saubere Trennung von Frontend und Backend
 
-✅ Persistente Speicherung in PostgreSQL
-
-✅ Erstellung von Entitäten über Web-Oberfläche
-
-✅ Automatisierte Frontend-Tests
-
-✅ Keine Klartext-Credentials im Repository
-
-✅ Umsetzung der ursprünglich präsentierten Projektidee
-
-👨‍💻 Autor
+👤 Autor
 
 Fourat Nouairia
-HTW Berlin – Webtechnologien
+HTW Berlin – Wirtschaftsinformatik
+Modul: Webtechnologien
