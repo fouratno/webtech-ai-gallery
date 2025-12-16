@@ -11,7 +11,9 @@ describe('App shell', () => {
   it('renders the gallery heading', () => {
     const wrapper = mount(App)
     expect(wrapper.text()).toContain('AI Interior Gallery')
-    expect(wrapper.text()).toContain('Create and browse curated AI-powered interior design prompts.')
+    expect(wrapper.text()).toContain(
+      'Create and browse curated AI-powered interior design prompts.'
+    )
   })
 })
 
@@ -32,7 +34,7 @@ describe('ConceptList', () => {
       vi.fn().mockResolvedValue({
         ok: true,
         json: async () => mockConcepts
-      })
+      } as any)
     )
 
     const wrapper = mount(ConceptList)
@@ -56,25 +58,35 @@ describe('ConceptList', () => {
       'fetch',
       vi
         .fn()
-        .mockResolvedValueOnce({ ok: true, json: async () => mockConcepts })
-        .mockResolvedValueOnce({ ok: true, json: async () => createdConcept })
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => mockConcepts
+        } as any)
+        .mockResolvedValueOnce({
+          ok: true,
+          json: async () => createdConcept
+        } as any)
     )
 
     const wrapper = mount(ConceptList)
     await flushPromises()
 
     const inputs = wrapper.findAll('input')
-    await inputs[0].setValue(createdConcept.title)
-    await inputs[1].setValue(createdConcept.promptArtist)
-    await inputs[2].setValue(createdConcept.aiTool)
-    await inputs[3].setValue(createdConcept.imageUrl)
+    expect(inputs.length).toBeGreaterThanOrEqual(4)
+
+    await inputs[0]!.setValue(createdConcept.title)
+    await inputs[1]!.setValue(createdConcept.promptArtist)
+    await inputs[2]!.setValue(createdConcept.aiTool)
+    await inputs[3]!.setValue(createdConcept.imageUrl)
 
     await wrapper.find('form').trigger('submit.prevent')
     await flushPromises()
 
     expect(wrapper.text()).toContain('Concept created successfully')
+
     const cards = wrapper.findAll('.card')
-    expect(cards[0].text()).toContain('Calm Bedroom')
+    expect(cards.length).toBeGreaterThan(0)
+    expect(cards[0]!.text()).toContain('Calm Bedroom')
   })
 
   it('renders create button', async () => {
@@ -83,7 +95,7 @@ describe('ConceptList', () => {
       vi.fn().mockResolvedValue({
         ok: true,
         json: async () => []
-      })
+      } as any)
     )
 
     const wrapper = mount(ConceptList)
