@@ -1,39 +1,68 @@
 package com.aiinteriorgallery.aiinteriorgallery.controller;
 
 import com.aiinteriorgallery.aiinteriorgallery.model.Concept;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.io.IOException;
-import java.io.InputStream;
+import com.aiinteriorgallery.aiinteriorgallery.service.ConceptService;
+import java.net.URI;
 import java.util.List;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
+@RequestMapping("/concepts")
 public class ConceptController {
 
-    @GetMapping("/concepts")
+    private final ConceptService conceptService;
+
+    public ConceptController(ConceptService conceptService) {
+        this.conceptService = conceptService;
+    }
+
+    @GetMapping
     public ResponseEntity<List<Concept>> getConcepts() {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
+        return ResponseEntity.ok(conceptService.getAllConcepts());
+    }
 
-            // Load JSON file from src/main/resources/data/concepts.json
-            InputStream inputStream =
-                    new ClassPathResource("data/concepts.json").getInputStream();
+    @PostMapping
+    public ResponseEntity<?> createConcept(
+            @RequestBody Concept concept, UriComponentsBuilder uriComponentsBuilder) {
+        String title = trim(concept.getTitle());
+        String promptArtist = trim(concept.getPromptArtist());
+        String aiTool = trim(concept.getAiTool());
+        String imageUrl = trim(concept.getImageUrl());
 
-            List<Concept> concepts = mapper.readValue(
-                    inputStream,
-                    new TypeReference<List<Concept>>() {}
-            );
-
-            return ResponseEntity.ok(concepts);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
+        if (!StringUtils.hasText(title)) {
+            return ResponseEntity.badRequest().body("Title is required");
         }
+        if (!StringUtils.hasText(promptArtist)) {
+            return ResponseEntity.badRequest().body("Prompt artist is required");
+        }
+        if (!StringUtils.hasText(aiTool)) {
+            return ResponseEntity.badRequest().body("AI tool is required");
+        }
+        if (!StringUtils.hasText(imageUrl)) {
+            return ResponseEntity.badRequest().body("Image URL is required");
+        }
+        if (imageUrl.length() > 500) {
+            return ResponseEntity.badRequest().body("Image URL must be 500 characters or fewer");
+        }
+
+        concept.setTitle(title);
+        concept.setPromptArtist(promptArtist);
+        concept.setAiTool(aiTool);
+        concept.setImageUrl(imageUrl);
+
+        Concept created = conceptService.createConcept(concept);
+        URI location = uriComponentsBuilder.path("/concepts/{id}").buildAndExpand(created.getId()).toUri();
+        return ResponseEntity.created(location).body(created);
+    }
+
+    private String trim(String value) {
+        return value == null ? "" : value.trim();
     }
 }
