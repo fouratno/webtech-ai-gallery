@@ -2,6 +2,7 @@
   <div class="gallery">
     <p v-if="loading" class="status">Loading concepts...</p>
     <p v-else-if="error" class="status error">Failed to load concepts: {{ error }}</p>
+    <p v-else-if="concepts.length === 0" class="status">No concepts available yet.</p>
     <div v-else class="card-list">
       <div v-for="concept in concepts" :key="concept.title" class="card">
         <img :src="concept.imageUrl" :alt="concept.title" class="image" />
@@ -29,7 +30,8 @@ const concepts = ref<Concept[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+const rawApiBase = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8080'
+const API_BASE = rawApiBase.replace(/\/+$/, '')
 
 onMounted(async () => {
   try {

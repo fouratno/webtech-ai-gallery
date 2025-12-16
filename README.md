@@ -67,14 +67,13 @@ http://localhost:8080/view
 ### Backend (Docker Service)
 - **Dockerfile** nutzt JDK 21 für Build & Runtime.
 - Start-Kommando: wird automatisch aus `ENTRYPOINT` übernommen (`java -jar app.jar`).
-- Der Spring Boot Server liest den Port aus der Umgebungsvariablen `PORT` (Render Vorgabe) und erlaubt CORS für das Frontend (localhost und Render-URL).
-- **CORS-Origins anpassen:** In `src/main/java/com/aiinteriorgallery/aiinteriorgallery/config/CorsConfig.java` die Platzhalter-URL durch deine tatsächliche Render-Frontend-Domain ersetzen.
+- Der Spring Boot Server liest den Port aus der Umgebungsvariablen `PORT` (Render Vorgabe) und erlaubt CORS für das Frontend unter `https://webtech-ai-gallery-2.onrender.com` sowie lokal `http://localhost:5173`. Die Routen `GET /concepts` und `POST /concepts` sind damit für das Frontend erreichbar.
 
 ### Frontend (Static Site)
 - **Root Directory:** `frontend`
 - **Build Command:** `npm install && npm run build`
 - **Publish Directory:** `dist`
-- **Environment Variable:** `VITE_API_BASE_URL` (z. B. `https://<dein-backend>.onrender.com`); für Production liegt eine Vorlage unter `frontend/.env.production`.
+- **Environment Variable:** `VITE_API_BASE_URL` (auf Render `https://webtech-ai-gallery-backen.onrender.com`). Das Frontend greift damit per GET (und künftig POST) auf `https://webtech-ai-gallery-backen.onrender.com/concepts` zu, ohne dass der Browser eine CORS-Fehlermeldung zeigt.
 
 📂 Projektstruktur
 src/
