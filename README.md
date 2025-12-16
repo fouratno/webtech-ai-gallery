@@ -1,3 +1,5 @@
+![CI](https://github.com/fouratno/webtech-ai-gallery/actions/workflows/ci.yml/badge.svg)
+
 🖼️ AI Interior Gallery
 
 Eine Web-Applikation zur Verwaltung und Präsentation von KI-generierten Interior-Design-Konzepten.

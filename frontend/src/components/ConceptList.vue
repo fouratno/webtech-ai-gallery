@@ -111,7 +111,8 @@ const submit = async () => {
     concepts.value.unshift(created)
     success.value = true
     resetForm()
-  } catch (e) {
+  } catch (err) {
+    console.error(err)
     error.value = 'Network error'
   } finally {
     loading.value = false

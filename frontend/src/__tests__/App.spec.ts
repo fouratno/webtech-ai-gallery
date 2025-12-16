@@ -28,14 +28,21 @@ describe('ConceptList', () => {
     }
   ]
 
+  const createJsonResponse = <T>(data: T, init?: ResponseInit) =>
+    new Response(JSON.stringify(data), {
+      headers: { 'Content-Type': 'application/json' },
+      status: init?.status ?? 200
+    })
+
+  const stubFetch = () => {
+    const fetchMock = vi.fn<typeof fetch>()
+    vi.stubGlobal('fetch', fetchMock)
+    return fetchMock
+  }
+
   it('loads concepts from the API', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue({
-        ok: true,
-        json: async () => mockConcepts
-      } as any)
-    )
+    const fetchMock = stubFetch()
+    fetchMock.mockResolvedValue(createJsonResponse(mockConcepts))
 
     const wrapper = mount(ConceptList)
     await flushPromises()
@@ -54,19 +61,10 @@ describe('ConceptList', () => {
       imageUrl: 'https://example.com/bedroom.jpg'
     }
 
-    vi.stubGlobal(
-      'fetch',
-      vi
-        .fn()
-        .mockResolvedValueOnce({
-          ok: true,
-          json: async () => mockConcepts
-        } as any)
-        .mockResolvedValueOnce({
-          ok: true,
-          json: async () => createdConcept
-        } as any)
-    )
+    const fetchMock = stubFetch()
+    fetchMock
+      .mockResolvedValueOnce(createJsonResponse(mockConcepts))
+      .mockResolvedValueOnce(createJsonResponse(createdConcept))
 
     const wrapper = mount(ConceptList)
     await flushPromises()
@@ -90,13 +88,8 @@ describe('ConceptList', () => {
   })
 
   it('renders create button', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue({
-        ok: true,
-        json: async () => []
-      } as any)
-    )
+    const fetchMock = stubFetch()
+    fetchMock.mockResolvedValue(createJsonResponse([]))
 
     const wrapper = mount(ConceptList)
     await flushPromises()
