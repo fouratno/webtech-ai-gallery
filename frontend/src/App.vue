@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <header>
-      <h1>welcome to e inspiration</h1>
+      <h1>AI Interior Gallery</h1>
+      <p class="subtitle">Create and browse curated AI-powered interior design prompts.</p>
     </header>
     <main>
       <ConceptList />
@@ -21,7 +22,6 @@ body {
   padding: 0;
 }
 
-/* Centered container */
 #app {
   display: flex;
   flex-direction: column;
@@ -30,19 +30,23 @@ body {
   text-align: center;
 }
 
-/* Clean page header */
 header {
-  margin-top: 40px;
-  margin-bottom: 20px;
+  margin-top: 32px;
+  margin-bottom: 12px;
 }
 
 h1 {
-  font-size: 2rem;
+  font-size: 2.2rem;
   font-weight: 700;
   color: #111;
+  margin: 0 0 0.4rem;
 }
 
-/* Layout styling for cards (inherited by ConceptList) */
+.subtitle {
+  margin: 0;
+  color: #4f5660;
+}
+
 main {
   width: 100%;
   max-width: 1200px;
